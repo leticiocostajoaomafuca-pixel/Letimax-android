@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#C9A84C">
+<link rel="manifest" href="manifest.json">
+<title>LétimaX</title>
+<style>
+:root{--bg:#FFFFFF;--tx:#1A1A1A;--ac:#C9A84C;--bl:#F2F2F2;--ub:#F3E9C8}
+@media(prefers-color-scheme:dark){:root{--bg:#0D0D0D;--tx:#FFFFFF;--bl:#1E1E1E;--ub:#4A3F1C}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,sans-serif;display:flex;flex-direction:column}
+header{padding:12px 16px;border-bottom:1px solid var(--bl);color:var(--ac);font-weight:700;display:flex;justify-content:space-between}
+#login{margin:auto;width:min(320px,90%);text-align:center}
+input{width:100%;padding:12px;border:1px solid var(--ac);border-radius:10px;background:var(--bg);color:var(--tx);font-size:16px}
+button{padding:12px 18px;border:0;border-radius:10px;background:var(--ac);color:#111;font-weight:700;font-size:16px}
+#chat{display:none;flex:1;flex-direction:column;min-height:0}
+#msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:85%;padding:10px 12px;border-radius:14px;white-space:pre-wrap;line-height:1.4}
+.u{align-self:flex-end;background:var(--ub)}.a{align-self:flex-start;background:var(--bl)}
+form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--bl)}form input{flex:1}
+#erro{color:#c0392b;min-height:20px;margin:8px 0}
+</style>
+</head>
+<body>
+<header><span>LétimaX</span><span id="sair" style="display:none;cursor:pointer">Sair</span></header>
+
+<div id="login">
+  <h2>Bem-vindo, Senhor Letício</h2>
+  <input id="pin" type="password" inputmode="numeric" placeholder="PIN" autocomplete="current-password">
+  <div id="erro"></div>
+  <button id="entrar">Entrar</button>
+</div>
+
+<div id="chat">
+  <div id="msgs"></div>
+  <form id="f"><input id="t" placeholder="Escreva à LétimaX..." autocomplete="off"><button>Enviar</button></form>
+</div>
+
+<script>
+let token=sessionStorage.getItem("tk")||"";
+const $=id=>document.getElementById(id);
+function mostrar(){ $("login").style.display=token?"none":"block";
+  $("chat").style.display=token?"flex":"none"; $("sair").style.display=token?"inline":"none"; }
+function bolha(txt,cls){const d=document.createElement("div");d.className="m "+cls;d.textContent=txt;
+  $("msgs").appendChild(d);$("msgs").scrollTop=1e9;return d;}
+async function api(url,corpo){
+  const r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json",
+    ...(token?{Authorization:"Bearer "+token}:{})},body:JSON.stringify(corpo)});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401&&token){token="";sessionStorage.removeItem("tk");mostrar();}
+  if(!r.ok)throw new Error(j.detail||j.erro||"Erro");
+  return j;}
+$("entrar").onclick=async()=>{
+  try{const j=await api("/auth/login",{pin:$("pin").value});
+    token=j.token;sessionStorage.setItem("tk",token);$("pin").value="";$("erro").textContent="";
+    mostrar();bolha("Bem-vindo, Senhor Letício. Estou pronto.","a");}
+  catch(e){$("erro").textContent=e.message;}};
+$("f").onsubmit=async ev=>{ev.preventDefault();const t=$("t").value.trim();if(!t)return;
+  $("t").value="";bolha(t,"u");const p=bolha("A pensar...","a");
+  try{p.textContent=(await api("/chat",{mensagem:t})).resposta;}
+  catch(e){p.textContent="⚠ "+e.message;}};
+$("sair").onclick=()=>{token="";sessionStorage.removeItem("tk");mostrar();};
+mostrar();
+</script>
+</body>
+</html>
