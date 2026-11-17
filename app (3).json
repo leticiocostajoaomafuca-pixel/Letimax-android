@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "LétimaX",
+    "slug": "letimax",
+    "version": "0.3.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "android": {
+      "package": "com.letimax.app",
+      "permissions": [
+        "USE_BIOMETRIC", "USE_FINGERPRINT", "INTERNET", "VIBRATE", "WAKE_LOCK",
+        "POST_NOTIFICATIONS", "FOREGROUND_SERVICE", "FOREGROUND_SERVICE_DATA_SYNC",
+        "RECORD_AUDIO", "CAMERA", "CALL_PHONE", "REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
+      ]
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-sqlite",
+      "expo-dev-client",
+      ["expo-camera", { "cameraPermission": "A LétimaX usa a câmara para acender a lanterna por comando de voz." }],
+      ["expo-speech-recognition", {
+        "microphonePermission": "A LétimaX usa o microfone para os comandos de voz do Senhor Letício.",
+        "speechRecognitionPermission": "A LétimaX usa o reconhecimento de voz para entender os seus comandos.",
+        "androidSpeechServicePackages": ["com.google.android.googlequicksearchbox"]
+      }],
+      "./plugins/withNotifeeService"
+    ]
+  }
+}

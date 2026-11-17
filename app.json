@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "LétimaX",
+    "slug": "letimax",
+    "version": "0.6.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "android": {
+      "package": "com.letimax.app",
+      "permissions": [
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT",
+        "INTERNET",
+        "VIBRATE",
+        "WAKE_LOCK",
+        "POST_NOTIFICATIONS",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_DATA_SYNC",
+        "RECORD_AUDIO",
+        "CAMERA",
+        "RECEIVE_BOOT_COMPLETED",
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_WIFI_STATE",
+        "MODIFY_AUDIO_SETTINGS"
+      ]
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-sqlite",
+      "expo-dev-client",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "A LétimaX usa a câmara para acender a lanterna por comando de voz."
+        }
+      ],
+      "./plugins/withNotifeeService"
+    ]
+  }
+}
